@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:football_shop_mobile/widgets/left_drawer.dart';
+import 'package:football_shop_mobile/widgets/news_card.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -40,6 +42,7 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
+      drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -97,55 +100,17 @@ class InfoChip extends StatelessWidget {
     );
   }
 }
+
 class ItemHomepage {
   final String name;
   final IconData icon;
   final Color color;
   final String snackMessage;
 
-  ItemHomepage({
+  const ItemHomepage({
     required this.name,
     required this.icon,
     required this.color,
     required this.snackMessage,
   });
-}
-
-class ItemCard extends StatelessWidget {
-  final ItemHomepage item;
-
-  const ItemCard(this.item, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: item.color,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(item.snackMessage)));
-        },
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(item.icon, color: Colors.white, size: 30),
-                const SizedBox(height: 6),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
