@@ -46,3 +46,38 @@ Form dibungkus dengan **SingleChildScrollView** agar tetap bisa di-scroll pada l
 
 ### 4) Konsistensi warna tema
 Di **MaterialApp**, digunakan `ColorScheme.fromSwatch(primarySwatch: Colors.blue)` supaya AppBar dan komponen default mengikuti warna biru. Tombol grid di home masih sama seperti Tugas 7 (biru/hijau/merah), sementara tombol form menggunakan warna yang masih satu palet. Dengan begitu seluruh layar terasa berasal dari brand yang sama tanpa perlu set warna manual di tiap widget.
+
+
+---
+
+# Tugas 9
+
+### 1) Kenapa butuh model Dart untuk JSON?
+Model Dart memastikan struktur dan tipe data konsisten (int, String, bool, DateTime) serta null-safety terjaga. Model dengan **fromJson/toJson** membuat tipe data jelas, konsisten dan lebih maintainable.
+
+### 2) Peran http vs CookieRequest
+**http** dipakai untuk request biasa tanpa session (seperti fetch public) dan memberi kontrol manual untuk header/body/response. **CookieRequest** (pbp_django_auth) memaintain session cookies/CSRF otomatis, digunakan untuk endpoint Django yang butuh login dan persistence credential. Jadi, **http** = fetch stateless saja sedangkan **CookieRequest** = stateful, autentikasi Django yang membutuhkan session.
+
+### 3) Kenapa CookieRequest dibagi ke semua komponen?
+Session (cookies, loggedIn status) harus dari satu sumber, jika tiap widget membuat instance sendiri, cookie login akan terputus. Dengan Provider<CookieRequest> di root, semua screen berbagi session yang sama: login -> cookies tersimpan -> fetch/POST berikutnya otomatis pakai session yang sudah dibuat. Logout memutus session untuk seluruh app.
+
+### 4) Konfigurasi konektivitas Flutter ↔ Django
+- **ALLOWED_HOSTS** menambah **10.0.2.2** agar emulator Android dapat mengakses host machine.
+- **CORS, CORS_ALLOW_CREDENTIALS, SameSite=None, secure cookies** mengizinkan cross-origin dan mengirim cookie saat auth dari web/Chrome/emulator.  
+- Android permission `<uses-permission android:name="android.permission.INTERNET" />` allow app terkoneksi dengan internet.  
+
+### 5) Alur data dari input ke tampilan Flutter
+Input di form Flutter -> divalidasi -> dikirim via **CookieRequest.post** ke endpoint Django (create shoes) -> Django menyimpan dan membalas JSON -> Flutter parse ke model Dart -> ditampilkan lewat widget (list/detail) dengan `FutureBuilder`/setState.
+
+### 6) Mekanisme autentikasi (login/register/logout)
+- Register: form Flutter mengirim username dan password ke **/auth/register/** -> Django membuat user lalu response -> Flutter popup SnackBar dan redirect ke login.  
+- Login: form kirim ke **/auth/login/** via **CookieRequest.login()** -> Django authenticate dan set session cookie -> **CookieRequest** menyimpan cookie -> Flutter **pushReplacement** ke Home(request berikutnya membawa cookie).  
+- Logout: panggil **/auth/logout/** via **CookieRequest.logout()** -> Django menghapus session -> Flutter SnackBar + **pushReplacement** ke Login.
+
+### 7) Step-by-step implementasi checklist
+1) Modify backend Alpha_Shoes: auth endpoints, JSON list/detail, create API, CORS/hosts.
+2) Install dependency `provider`, `pbp_django_auth`, `http`.
+3) Buat login/register screens, set **home: LoginPage**, dan wire URLs ke Django.  
+4) Modify form untuk melakukan POST via **CookieRequest** ke API create shoes.
+5) Buat model Dart (**Shoe**) dan screens untuk list/detail, fetch dengan **CookieRequest.get**, tampilkan cards/detail.  
+6) Update drawer/menu navigasi (Home, All Products, My Products, Add Product, Logout) supaya sama dengan webapp.

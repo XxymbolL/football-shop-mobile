@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:football_shop_mobile/widgets/left_drawer.dart';
-import 'package:football_shop_mobile/widgets/news_card.dart';
+import 'package:football_shop_mobile/widgets/menu_card.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
-
-  final String nama  = "Rifqy Pradipta Kurniawan";
-  final String npm   = "2406422922";
-  final String kelas = "B";
-
 
   final List<ItemHomepage> items = [
     ItemHomepage(
       name: "All Products",
       icon: Icons.store_mall_directory,
-      color: Colors.blue,
+      color: Colors.black87,
       snackMessage: "Kamu telah menekan tombol All Products",
     ),
     ItemHomepage(
       name: "My Products",
       icon: Icons.inventory_2,
-      color: Colors.green,
+      color: Colors.grey.shade800,
       snackMessage: "Kamu telah menekan tombol My Products",
     ),
     ItemHomepage(
-      name: "Create Product",
-      icon: Icons.add_circle_outline,
-      color: Colors.red,
-      snackMessage: "Kamu telah menekan tombol Create Product",
+      name: "Add Product",
+      icon: Icons.post_add,
+      color: Colors.black54,
+      snackMessage: "Kamu telah menekan tombol Add Product",
     ),
   ];
 
@@ -37,9 +32,9 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Alpha Shoes',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
       drawer: const LeftDrawer(),
@@ -48,22 +43,12 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoChip(label: 'NPM', value: npm),
-                InfoChip(label: 'Name', value: nama),
-                InfoChip(label: 'Class', value: kelas),
-              ],
-            ),
-            const SizedBox(height: 24),
-
+            const SizedBox(height: 8),
             const Text(
               'Selamat datang di Alpha Shoes',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             const SizedBox(height: 16),
-
             GridView.count(
               crossAxisCount: 3,
               crossAxisSpacing: 12,
@@ -74,29 +59,6 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class InfoChip extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const InfoChip({super.key, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      label: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text(value),
-        ],
-      ),
-      elevation: 2,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
     );
   }
 }

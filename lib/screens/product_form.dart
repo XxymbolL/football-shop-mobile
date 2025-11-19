@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:football_shop_mobile/config.dart';
+import 'package:football_shop_mobile/screens/menu.dart';
 import 'package:football_shop_mobile/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -23,11 +27,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tambah Produk Baru'),
         centerTitle: true,
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
       drawer: const LeftDrawer(),
@@ -218,50 +223,44 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo,
+                      backgroundColor: Colors.black,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title:
-                                  const Text('Produk berhasil tersimpan'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Nama: $_name'),
-                                    Text('Harga: Rp$_price'),
-                                    Text('Deskripsi: $_description'),
-                                    Text('Thumbnail: $_thumbnail'),
-                                    Text('Ukuran: $_size'),
-                                    Text('Stok: $_stock pasang'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _formKey.currentState!.reset();
-                                    setState(() {
-                                      _name = "";
-                                      _price = 0;
-                                      _description = "";
-                                      _thumbnail = "";
-                                      _size = "35";
-                                      _stock = 0;
-                                    });
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
+                        final response = await request.post(
+                          "$baseUrl/api/shoes/create/",
+                          {
+                            "name": _name,
+                            "price": _price.toString(),
+                            "description": _description,
+                            "thumbnail": _thumbnail,
+                            "size[]": _size,
+                            "stock[]": _stock.toString(),
                           },
                         );
+                        if (context.mounted) {
+                          if ((response["ok"] ?? false) == true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Produk berhasil tersimpan!"),
+                              ),
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Gagal menyimpan produk. ${response["error"] ?? ""}",
+                                ),
+                              ),
+                            );
+                          }
+                        }
                       }
                     },
                     child: const Text(

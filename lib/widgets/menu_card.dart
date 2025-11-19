@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:football_shop_mobile/screens/menu.dart';
 import 'package:football_shop_mobile/screens/product_form.dart';
+import 'package:football_shop_mobile/screens/shoe_list.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -14,7 +15,7 @@ class ItemCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
+        onTap: () async {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -23,11 +24,25 @@ class ItemCard extends StatelessWidget {
               ),
             );
 
-          if (item.name == "Create Product") {
+          if (item.name == "Add Product") {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const ProductFormPage(),
+              ),
+            );
+          } else if (item.name == "My Products") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ShoeListPage(onlyMine: true),
+              ),
+            );
+          } else if (item.name == "All Products" || item.name == "Products") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ShoeListPage(onlyMine: false),
               ),
             );
           }
